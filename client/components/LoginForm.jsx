@@ -94,7 +94,7 @@ export const LoginForm = () => {
                 <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don't have an account?{" "}
                   <Link
-                    href="/register"
+                    href="/"
                     class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Register here

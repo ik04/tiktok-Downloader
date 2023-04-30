@@ -1,16 +1,41 @@
 import json
 import requests
-from threading import Thread
+import threading
 
 from django.http import JsonResponse
-from django.http import FileResponse
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
-from rest_framework.decorators import api_view
 
-@csrf_exempt
+
+def download_video(vid_id):
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    url = 'https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id=' + vid_id
+
+    response = requests.get(url, headers=headers)
+    json_data = json.loads(response.text)
+
+    new_url = json_data['aweme_list'][0]['video']['play_addr']['url_list'][0]
+
+    file_name = f'{vid_id}.mp4'
+    file_path = f'videos/{file_name}'  
+    download_file = requests.get(new_url, headers=headers).content
+
+    with open(file_path, 'wb') as file:
+        file.write(download_file)
+
+    return file_name
+
+
+def download_async(vid_id):
+    download = threading.Thread(target=download_video, args=[vid_id])
+    download.start()
+
+
 @api_view(["POST"])
 def tiktok_videos(request):
     if request.method == 'POST':
@@ -46,7 +71,7 @@ def tiktok_videos(request):
 
         video_links = []
         for video_element in video_elements:
-            if video_element == None:
+            if video_element is None:
                 continue
             try:
                 if video_element.get_attribute("href").startswith(f"https://www.tiktok.com/@{username}/"):
@@ -64,44 +89,12 @@ def tiktok_videos(request):
         }
         return JsonResponse(data)
 
-headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-
-def download_async(vid_id):
-    download = Thread(target=download_video, args=[vid_id])
-    download.start()
-
-def download_video(vid_id):
-    url = 'https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id='+vid_id
-
-    response = requests.get(url, headers=headers)
-    json_data = json.loads(response.text)
-
-    new_url = json_data['aweme_list'][0]['video']['play_addr']['url_list'][0]
-
-    file_name = f'{vid_id}.mp4'
-    download_file = requests.get(new_url, headers=headers).content
-
-    chunk_size = 1024
-
-    with open(file_name, 'wb') as file:
-        for i in range(0, len(download_file), chunk_size):
-            chunk = download_file[i:i+chunk_size]
-            file.write(chunk)
 
 @api_view(["POST"])
 def download_video_view(request):
     vid_id = request.POST.get("vid_id")
     download_async(vid_id)
-    response_data = {'status': 'success'}
-    
-    
+    file_name = download_video(vid_id)
+    file_path = request.build_absolute_uri('/') + f'videos/{file_name}'
+    response_data = {'file_path': file_path, 'file_name':file_name}
     return JsonResponse(response_data)
-# todo: send a file response with the video to laravel
-    
-    # file_path = f'{vid_id}.mp4'
-    # file = open(file_path, 'rb')
-    # response = FileResponse(file, content_type='application/octet-stream')
-    # response['Content-Disposition'] = f'attachment; filename="{file_path}"'
-    # return response
-

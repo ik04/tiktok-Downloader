@@ -23,7 +23,7 @@ Route::post("/signin",[UserController::class,"signIn"]);
 Route::group(['middleware'=>['auth:sanctum']],function(){
 });
 Route::post("/scrape/search",[DjangoScraperService::class,"scrape"]);
-// Route::post("/scrape/download",[DjangoScraperService::class,"downloadVideo"]);
+Route::post("/scrape/download",[DjangoScraperService::class,"downloadVideo"]);
 
 
 Route::get("/users",[UserController::class,"getUsers"]);
