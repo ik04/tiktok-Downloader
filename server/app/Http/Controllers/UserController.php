@@ -69,6 +69,35 @@ class UserController extends Controller
         return response()->json(['user'=>$user,'token'=>$token],200)->withCookie(cookie()->forever('at',$token));
     }
 
+    public function userData(Request $request){
+        if(!$request->hasCookie("at")){
+            return response()->json([
+                'message' => "Unauthenticated"
+            ],401);
+        }
+        if($token = \Laravel\Sanctum\PersonalAccessToken::findToken($request->cookie("at"))){
+            $user = $token->tokenable;
+        }
+        else{
+            return response()->json([
+                'message' => "unauthenticated"
+            ],401);
+        }
+        if(is_null($user)){
+            return response()->json([
+                'message' => "Unauthenticated"
+            ]);
+        }
+        return response() -> json([
+            'email' => $user->email,
+            'first_name' => $user->first_name,
+            'username' => $user->username,
+            'uuid' => $user->uuid,  
+            'subscriberId' => $user->subscriberId,
+            'access_token' => $request ->cookie('at'),
+        ],200);
+    }
+
     
     // todo: abstract the django api call by calling it here
     // todo: place checks for if paid or not

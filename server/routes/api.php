@@ -19,12 +19,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("/signup",[UserController::class,"signUp"]);
 Route::post("/signin",[UserController::class,"signIn"]);
+Route::get("/user",[UserController::class,"userData"]);
+
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::post("/scrape/search",[DjangoScraperService::class,"scrape"]);
+    Route::post("/scrape/download",[DjangoScraperService::class,"downloadVideo"]);
+    Route::post("/isLog", function () {  
+        return response()->noContent();
+    });
 });
-Route::post("/scrape/search",[DjangoScraperService::class,"scrape"]);
-Route::post("/scrape/download",[DjangoScraperService::class,"downloadVideo"]);
 
 
 Route::get("/users",[UserController::class,"getUsers"]);
 Route::get("/subs",[SubscriptionController::class,"getSubscriptions"]);
+//todo: fix the auth issues asap

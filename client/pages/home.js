@@ -6,7 +6,7 @@ const home = () => {
   const [links, setLinks] = useState([]);
   const [download, setDownload] = useState(false);
   const [file, setFile] = useState({});
-  const [vidId, setVidId] = useState("6782218030668696837");
+  // const [vidId, setVidId] = useState("6782218030668696837");
 
   const handleSearch = async (e) => {
     const url = "http://127.0.0.1:8000/api/scrape/search";
@@ -16,8 +16,7 @@ const home = () => {
     console.log(resp.data.video_links);
     setLinks(resp.data.video_links);
   };
-  const handleDownload = async (e) => {
-    e.preventDefault();
+  const handleDownload = async (vidId) => {
     const url = "http://127.0.0.1:8000/api/scrape/download";
     // const resp = await axios
     //   .post(url, { vid_id: vidId })
@@ -47,12 +46,6 @@ const home = () => {
       link.click();
     });
 
-    // console.log(resp);
-    // const link = document.createElement("a");
-    // link.href = resp.data.file_path;
-    // link.download = resp.data.file_name;
-    // link.click();
-    // setFile({ filePath: resp.data.file_path, fileName: resp.data.file_name });
     setDownload(true);
   };
 
@@ -73,22 +66,45 @@ const home = () => {
         </button>
       </div>
       {links.map((link) => {
-        return <div>{link}</div>;
+        return (
+          <>
+            <div>{link}</div>;
+            <div className="">
+              <button onClick={handleDownload()}>Start Download</button>
+            </div>
+          </>
+        );
       })}
-
-      {!download ? (
-        <div className="">
-          <button onClick={handleDownload}>Start Download</button>
-        </div>
-      ) : (
-        <div className="">
-          <a href={file.filePath} download={file.fileName}>
-            Download File
-          </a>
-        </div>
-      )}
     </div>
   );
 };
-// todo: get the file downloaded on user inteface
+// todo: allow for dynamic download
+// todo: implement an amazing ui
+// todo:
+
 export default home;
+
+// export async function getServerSideProps(context) {
+//   const url = "http://localhost:8000/api/user";
+//   const cookie = context.req.cookies.at;
+//   const resp1 = await axios.get(url, { headers: { Cookie: `at=${cookie}` } });
+//   axios.defaults.headers.common[
+//     "Authorization"
+//   ] = `Bearer ${resp1.data.access_token}`;
+
+//   try {
+//     const instance = axios.create({
+//       withCredentials: true,
+//     });
+//     const url = "http://localhost:8000/api/isLog";
+//     const resp = await instance.post(url, {});
+//   } catch (error) {
+//     return {
+//       redirect: {
+//         permanent: false,
+//         destination: "/",
+//       },
+//     };
+//   }
+//   return { props: {} };
+// }
