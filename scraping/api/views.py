@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
+import os
+from django.conf import settings
 
 
 def download_video(vid_id):
@@ -22,13 +24,14 @@ def download_video(vid_id):
     new_url = json_data['aweme_list'][0]['video']['play_addr']['url_list'][0]
 
     file_name = f'{vid_id}.mp4'
-    file_path = f'videos/{file_name}'  
+    file_path = os.path.join(settings.MEDIA_ROOT, 'videos', file_name)  
     download_file = requests.get(new_url, headers=headers).content
 
     with open(file_path, 'wb') as file:
         file.write(download_file)
 
     return file_name
+
 
 
 def download_async(vid_id):
@@ -95,6 +98,6 @@ def download_video_view(request):
     vid_id = request.POST.get("vid_id")
     download_async(vid_id)
     file_name = download_video(vid_id)
-    file_path = request.build_absolute_uri('/') + f'videos/{file_name}'
-    response_data = {'file_path': file_path, 'file_name':file_name}
+    file_path = os.path.join(settings.MEDIA_URL, 'videos', file_name)
+    response_data = {'file_path': file_path, 'file_name': file_name}
     return JsonResponse(response_data)
