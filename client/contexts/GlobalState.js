@@ -4,7 +4,9 @@ import axios from "axios";
 
 const GlobalState = (props) => {
   const [paid, setPaid] = useState(false);
-
+  const [loggedIn, setLoggedIn] = useState(false); // ! set through ssr
+  const [email, setEmail] = useState();
+  const [username, setUsername] = useState();
   const getUserData = async () => {
     const url = "http://localhost:8000/api/user";
     const resp = await axios.get(url, {});
@@ -17,13 +19,19 @@ const GlobalState = (props) => {
   };
 
   useEffect(() => {
-    getUserData();
-  }, []);
+    if (loggedIn) {
+      getUserData();
+    }
+  }, [loggedIn]);
   return (
     <GlobalContext.Provider
       value={{
         paid,
         setPaid,
+        loggedIn,
+        updateLoggedIn: (value) => {
+          setLoggedIn(value);
+        },
       }}
     >
       {props.children}

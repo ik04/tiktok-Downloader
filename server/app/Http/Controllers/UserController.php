@@ -52,9 +52,6 @@ class UserController extends Controller
         if($validation->fails()){
             return response()->json($validation->errors()->all(),400);
         }
-        // $fields = $request->validate([
-        // 'email'=>'required|string',
-        // 'password'=>'required|string',]); 
         $validated = $validation->validated();
        
         $user = User::where('email',$validated['email'])->first();
@@ -80,12 +77,12 @@ class UserController extends Controller
         }
         else{
             return response()->json([
-                'message' => "unauthenticated"
+                'message' => "unauthenticated 1"
             ],401);
         }
         if(is_null($user)){
             return response()->json([
-                'message' => "Unauthenticated"
+                'message' => "Unauthenticated 2"
             ]);
         }
         return response() -> json([
@@ -93,13 +90,22 @@ class UserController extends Controller
             'first_name' => $user->first_name,
             'username' => $user->username,
             'uuid' => $user->uuid,  
-            'subscriberId' => $user->subscriberId,
+            'subscriberId' => $user->subscriptionId,
             'access_token' => $request ->cookie('at'),
         ],200);
+        //! sub id should be its uuid, run a query to fetch the uuid
+    }
+    public function logout(Request $request){
+
+        $request->user()->currentAccessToken()->delete();
+        $response =  [
+            'message' => 'logged out'
+        ];
+        return response($response,200);
+
     }
 
     
-    // todo: abstract the django api call by calling it here
     // todo: place checks for if paid or not
     // todo: if the subs id is null ask the user to renew membership and allow for an endpoint to run an update request todo the same (after pay has been implemented)
     // todo: allow the user to sign in through username or email

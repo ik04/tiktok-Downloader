@@ -28,9 +28,9 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post("/isLog", function () {  
         return response()->noContent();
     });
+    Route::post("/logout",[UserController::class,"logout"]);
 });
 
 
 Route::get("/users",[UserController::class,"getUsers"]);
 Route::get("/subs",[SubscriptionController::class,"getSubscriptions"]);
-//todo: fix the auth issues asap

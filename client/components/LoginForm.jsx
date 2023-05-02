@@ -1,25 +1,24 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 
 export const LoginForm = () => {
-  const router = useRouter();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://127.0.0.1:8000/api/signin";
+      const url = "http://localhost:8000/api/signin";
       const resp = await axios.post(url, { email: email, password: password });
       console.log(resp);
-      router.push("/home");
+      location.href = "/home";
     } catch (error) {
-      console.log(error.response.data);
-      error.response.data.forEach((errorMsg) => {
-        toast.error(errorMsg);
-      });
+      console.log(error);
+      // error.response.data.forEach((errorMsg) => {
+      //   toast.error(errorMsg);
+      // });
     }
   };
   return (
