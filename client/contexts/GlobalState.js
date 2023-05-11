@@ -4,7 +4,7 @@ import axios from "axios";
 
 const GlobalState = (props) => {
   const [paid, setPaid] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false); // ! set through ssr
+  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState();
   const [username, setUsername] = useState();
   const getUserData = async () => {

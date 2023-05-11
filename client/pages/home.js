@@ -11,7 +11,6 @@ const home = (props) => {
   const [links, setLinks] = useState([]);
   const [download, setDownload] = useState(false);
   const [file, setFile] = useState({});
-  // const [vidId, setVidId] = useState();
   useEffect(() => {
     updateLoggedIn(props.loggedIn);
   }, [props.loggedIn]);
@@ -25,12 +24,16 @@ const home = (props) => {
   };
 
   const handleSearch = async (e) => {
-    const url = "http://127.0.0.1:8000/api/scrape/search";
-    const resp = await axios.post(url, {
-      username: search,
-    });
-    console.log(resp.data.video_links);
-    setLinks(resp.data.video_links);
+    if (search != "") {
+      const url = "http://127.0.0.1:8000/api/scrape/search";
+      const resp = await axios.post(url, {
+        username: search,
+      });
+      console.log(resp.data.video_links);
+      setLinks(resp.data.video_links);
+    } else {
+      toast.error("Please Enter a search term");
+    }
   };
   const handleDownload = async (linkId) => {
     try {
@@ -70,6 +73,7 @@ const home = (props) => {
             onChange={(e) => {
               setSearch(e.target.value);
             }}
+            required
           />
           <button
             type="submit"
@@ -107,9 +111,6 @@ const home = (props) => {
     </div>
   );
 };
-// todo: allow for dynamic download, optimize downloads
-// todo: implement an amazing ui
-//todo: add navbar for allowing logout
 
 export default home;
 
