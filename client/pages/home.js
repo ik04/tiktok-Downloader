@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
+import { Navbar } from "@/components/Navbar";
 
 const home = (props) => {
   const { updateLoggedIn } = useContext(GlobalContext);
@@ -53,21 +54,31 @@ const home = (props) => {
     }
   };
   return (
-    <div className="">
+    <div className="h-screen ">
       <Toaster />
-      <div className="flex">
-        <input
-          type="text"
-          name="search"
-          id=""
-          className="border border-black"
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-        />
-        <button type="submit" onClick={handleSearch}>
-          Search
-        </button>
+      <div className="md:fixed block">
+        <Navbar />
+      </div>
+
+      <div className="h-full flex items-center justify-center">
+        <div className="flex md:flex-row flex-col">
+          <input
+            type="text"
+            name="search"
+            id=""
+            className="border rounded-md p-3 mx-4 md:w-[1200px] w-2/3  border-black"
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+          <button
+            type="submit"
+            className="border border-gray-600 md:p-4 md:rounded-full bg-black text-white duration-200 hover:text-black hover:bg-white hover:border-black"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+        </div>
       </div>
       {links.map((link) => {
         const vidId = getTikTokVideoId(link);
@@ -103,12 +114,16 @@ const home = (props) => {
 export default home;
 
 export async function getServerSideProps(context) {
-  const url = "http://localhost:8000/api/user";
-  const cookie = context.req.cookies.at;
-  const resp1 = await axios.get(url, { headers: { Cookie: `at=${cookie}` } });
-  axios.defaults.headers.common[
-    "Authorization"
-  ] = `Bearer ${resp1.data.access_token}`;
+  try {
+    const url = "http://localhost:8000/api/user";
+    const cookie = context.req.cookies.at;
+    const resp1 = await axios.get(url, { headers: { Cookie: `at=${cookie}` } });
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${resp1.data.access_token}`;
+  } catch (error) {
+    console.log(error);
+  }
 
   try {
     const instance = axios.create({

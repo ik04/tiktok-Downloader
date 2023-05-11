@@ -26,6 +26,8 @@ const GlobalState = (props) => {
   return (
     <GlobalContext.Provider
       value={{
+        username,
+        email,
         paid,
         setPaid,
         loggedIn,

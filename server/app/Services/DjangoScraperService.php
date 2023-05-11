@@ -59,3 +59,4 @@ class DjangoScraperService
 
     
 }
+//todo: make a function to flush out stored vids from the storage folder
