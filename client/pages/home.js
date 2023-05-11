@@ -122,7 +122,12 @@ export async function getServerSideProps(context) {
       "Authorization"
     ] = `Bearer ${resp1.data.access_token}`;
   } catch (error) {
-    console.log(error);
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
   }
 
   try {
@@ -135,7 +140,7 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         permanent: false,
-        destination: "/",
+        destination: "/login",
       },
     };
   }

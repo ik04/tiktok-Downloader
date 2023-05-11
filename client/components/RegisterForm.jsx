@@ -192,5 +192,3 @@ export const RegisterForm = () => {
     </>
   );
 };
-//todo: alot of sanitization and validation error handling
-//todo: allow user to see password, change styles using state and eye button
