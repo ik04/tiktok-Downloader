@@ -57,13 +57,13 @@ const home = (props) => {
     }
   };
   return (
-    <div className="h-screen ">
+    <div className="h-screen">
       <Toaster />
       <div className="md:fixed block">
         <Navbar />
       </div>
 
-      <div className="h-full flex items-center justify-center">
+      <div className="h-full flex items-center justify-center flex-col space-y-10">
         <div className="flex md:flex-row flex-col">
           <input
             type="text"
@@ -83,31 +83,36 @@ const home = (props) => {
             Search
           </button>
         </div>
-      </div>
-      {links.map((link) => {
-        const vidId = getTikTokVideoId(link);
 
-        return (
-          <div className="flex my-5" key={link}>
-            <div className="font-mono">{link}</div>
-            <div className="">
-              <a
-                className="p-2 mx-2 border border-black font-mono cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toast.promise(handleDownload(vidId), {
-                    loading: "Downloading Video...",
-                    success: <b>Video Downloaded Successfully!</b>,
-                    error: <b>unexpected error</b>,
-                  });
-                }}
-              >
-                Start Download
-              </a>
-            </div>
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col">
+            {links.map((link) => {
+              const vidId = getTikTokVideoId(link);
+
+              return (
+                <div className="flex my-5" key={link}>
+                  <div className="font-mono">{link}</div>
+                  <div className="">
+                    <a
+                      className="p-2 mx-2 border border-black font-mono cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toast.promise(handleDownload(vidId), {
+                          loading: "Downloading Video...",
+                          success: <b>Video Downloaded Successfully!</b>,
+                          error: <b>unexpected error</b>,
+                        });
+                      }}
+                    >
+                      Start Download
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      </div>
     </div>
   );
 };
